@@ -60,14 +60,12 @@ console.log('Manhattan distance:', ferry.getManhattanDistance()); */
 // Part 2
 
 class Ship2 {
-  constructor(waypointY = 1, waypointX = 10, positionY = 0, positionX = 0) {
-    this.waypointY = waypointY;
-    this.waypointX = waypointX;
-    this.positionY = positionY;
-    this.positionX = positionX;
+  constructor(waypoint = [10, 1], position = [0, 0]) {
+    this.waypoint = waypoint;
+    this.position = position;
   }
   getManhattanDistance() {
-    return Math.abs(this.positionX) + Math.abs(this.positionY);
+    return Math.abs(this.position[0]) + Math.abs(this.position[1]);
   }
   readInstruction(instruction) {
     const action = instruction[0];
@@ -78,20 +76,20 @@ class Ship2 {
         this.#rotateWaypoint(action, value);
         break;
       case 'N':
-        this.waypointY += value;
+        this.waypoint[1] += value;
         break;
       case 'S':
-        this.waypointY -= value;
+        this.waypoint[1] -= value;
         break;
       case 'E':
-        this.waypointX += value;
+        this.waypoint[0] += value;
         break;
       case 'W':
-        this.waypointX -= value;
+        this.waypoint[0] -= value;
         break;
       case 'F':
-        this.positionY += this.waypointY * value;
-        this.positionX += this.waypointX * value;
+        this.position[0] += this.waypoint[0] * value;
+        this.position[1] += this.waypoint[1] * value;
         break;
       default:
         console.log('invalid instruction:', action);
@@ -99,19 +97,13 @@ class Ship2 {
   }
   #rotateWaypoint(side, value) {
     const iterations = value/90;
-    if (side = 'R') {
+    if (side === 'R') {
       for (let i = 0; i < iterations; i++) {
-        // [this.waypointY, this.waypointX] = [-this.waypointX, this.waypointY];
-        const cacheY = this.waypointY;
-        this.waypointY = -this.waypointX;
-        this.waypointX = cacheY;
+        [this.waypoint[0], this.waypoint[1]] = [this.waypoint[1], -this.waypoint[0]];
       }
     } else {
       for (let i = 0; i < iterations; i++) {
-        // [this.waypointY, this.waypointX] = [this.waypointX, -this.waypointY];
-        const cacheX = this.waypointX;
-        this.waypointX = -this.waypointY;
-        this.waypointY = cacheX;
+        [this.waypoint[0], this.waypoint[1]] = [-this.waypoint[1], this.waypoint[0]];
       }
     }
   }
@@ -123,11 +115,11 @@ F7
 R90
 F11`.split('\n');
 
-const ferry2 = new Ship2(1, 10);
+const ferry2 = new Ship2();
 console.log('initial ferry:', ferry2);
 for (instruction of inputArray) {
   ferry2.readInstruction(instruction);
-  console.log('after each instruction:', ferry2);
+  console.log('instruction:', instruction, 'after:', ferry2);
 }
-console.log('after instructions:', ferry2);
+// console.log('after instructions:', ferry2);
 console.log('Manhattan distance:', ferry2.getManhattanDistance());
