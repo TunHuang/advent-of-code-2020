@@ -19,21 +19,29 @@ console.log(busIdArrayAddTime[0][0] * busIdArrayAddTime[0][1]); */
 
 // Part 2
 
-console.log(busIdArray);
+console.log('busIdArray:', busIdArray);
 
 const busContestArray = busIdArray.map((element, index) => [element, index]).filter(array => array[0] !== 'x');
 
-console.log(busContestArray);
+console.log('busContestArray', busContestArray);
 
 function findTimestamp(contestArray) {
   const firstId = contestArray[0][0];
   let i = 1;
+  let counter = 0;
   while (true) {
+    // console.log(i);
     let valid = true;
     for (let j = 1; j < contestArray.length; j++) {
-      if ((contestArray[j][0] - (firstId * i) % contestArray[j][0]) % contestArray[j][1] !== 0) {
+      if ((firstId * i + contestArray[j][1]) % contestArray[j][0] !== 0) {
         valid = false;
         break;
+      } else if (j === 2){
+        console.log(`i=${i}, timestamp=${i * firstId}, works with ${contestArray[j][0]}`);
+        counter ++;
+        if (counter === 5) {
+          return;
+        }
       }
     }
     if (valid) {
@@ -43,8 +51,8 @@ function findTimestamp(contestArray) {
   }
 }
 
-const smallSample = `7,13,x,x,59,x,31,19`.split(',').map((element, index) => [element, index]).filter(array => array[0] !== 'x');
-console.log(smallSample);
+const smallSample = `67,7,x,59,61`.split(',').map((element, index) => [element, index]).filter(array => array[0] !== 'x');
+// console.log(smallSample);
 
-const result = findTimestamp(smallSample);
+const result = findTimestamp(busContestArray);
 console.log(result);
