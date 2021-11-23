@@ -67,7 +67,74 @@ function discardInvalidTickets(tickets, fields) {
 const myTicket = fs.readFileSync('myTicket.txt').toString().split(',').map(value => +value);
 const allTickets = [myTicket, ...nearbyTickets];
 
-console.log(nearbyTickets.length);
-console.log(allTickets.length);
 discardInvalidTickets(allTickets, fieldsArray);
-console.log(allTickets.length);
+
+console.log(allTickets);
+console.log(fieldsArray);
+
+const ticketFields = [];
+
+for (let i = 0; i < allTickets[0].length; i++) {
+  ticketFields.push([]);
+  allTickets.forEach(ticket => ticketFields[i].push(ticket[i]));
+}
+
+console.log("ticketFields:", ticketFields);
+
+const fieldMatrix = [];
+
+for (const ticketField of ticketFields) {
+  const booleanArray = [];
+  for (const generalField of fieldsArray) {
+    let valid = true;
+    for (const value of ticketField) {
+      if (!checkInRange(value, generalField)) {
+        valid = false;
+        break;
+      }
+    }
+    booleanArray.push(valid);
+  }
+  fieldMatrix.push(booleanArray);
+}
+
+console.log("fieldMatrix", fieldMatrix);
+
+/* 
+[
+ticketField1: [generalField1valid, generalField2valid...]
+ticketField2: [generalField1valid, generalField2valid...]
+ticketField3: [generalField1valid, generalField2valid...]
+ticketField4: [generalField1valid, generalField2valid...]
+]
+ */
+// There is probably an elegant matrix calculation that I don't know. I'll just try somehow.
+
+const numberOfValidFields = fieldMatrix.map(array => array.reduce((acc, boolean) => acc + +boolean), 0);
+console.log('numberOfValidFields', numberOfValidFields);
+
+
+/* const ticketFieldIndex = numberOfValidFields.indexOf(1);
+console.log(ticketFieldIndex);
+console.log(fieldMatrix[ticketFieldIndex]);
+const fieldIndex = fieldMatrix[ticketFieldIndex].indexOf(true);
+const fieldsTable = {};
+fieldsTable[fieldIndex] = ticketFieldIndex;
+console.log(fieldsTable); */
+
+function createFieldsTable(fieldMatrix, validNumberTable) {
+  const fieldsTable = {};
+  for (let i = 1; i <= validNumberTable.length; i++) {
+    const ticketFieldIndex = validNumberTable.indexOf(i);
+    const mappedFields = Object.values(fieldsTable);
+    const generalFieldIndex = fieldMatrix[ticketFieldIndex].findIndex((element, index) => element && !mappedFields.includes(index));
+    fieldsTable[ticketFieldIndex] = generalFieldIndex;
+  }
+  return fieldsTable;
+}
+
+const fieldsTable = createFieldsTable(fieldMatrix, numberOfValidFields);
+console.log(fieldsTable);
+
+const endResult = myTicket[1] * myTicket[6] * myTicket[19] * myTicket[2] * myTicket[16] * myTicket[17];
+console.log('endResult:', endResult);
