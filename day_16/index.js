@@ -39,3 +39,35 @@ function calcScanningErrorRate(tickets, fields) {
 
 const result = calcScanningErrorRate(nearbyTickets, fieldsArray);
 console.log(result);
+
+// Part 2
+
+// would certainly be easier with filter
+function discardInvalidTickets(tickets, fields) {
+  goThroughTickets:
+  for (let i = 0; i < tickets.length;) {
+    const ticket = tickets[i];
+    for (const value of ticket) {
+      let validValue = false;
+      for (const field of fields) {
+        if (checkInRange(value, field)) {
+          validValue = true;
+          break;
+        }
+      }
+      if (!validValue) {
+        tickets.splice(i, 1);
+        continue goThroughTickets;
+      }
+    }
+    i++;
+  }
+}
+
+const myTicket = fs.readFileSync('myTicket.txt').toString().split(',').map(value => +value);
+const allTickets = [myTicket, ...nearbyTickets];
+
+console.log(nearbyTickets.length);
+console.log(allTickets.length);
+discardInvalidTickets(allTickets, fieldsArray);
+console.log(allTickets.length);
