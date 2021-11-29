@@ -63,6 +63,51 @@ function calculate(expression) {
   return evaluate(dissolveBrackets(expression));
 }
 
-const resultPart1 = expressions.reduce((accu, expression) => accu + calculate(expression), 0);
-console.log(resultPart1);
+/* const resultPart1 = expressions.reduce((accu, expression) => accu + calculate(expression), 0);
+console.log(resultPart1); */
 
+// Part 2
+
+function evaluate2(expression) {
+  const array = expression.split(' ');
+  let indexPlus = array.indexOf('+');
+  while (indexPlus >= 0) {
+    const sum = +array[indexPlus - 1] + +array[indexPlus + 1];
+    array.splice(indexPlus - 1, 3, sum);
+    indexPlus = array.indexOf('+');
+  }
+  return evaluate(array.join(' '));
+}
+
+function dissolveBrackets2(expression) {
+  const array = expression.split('');
+  let openBrackets = [];
+  let lastBracket = 0;
+  let i = 0;
+  while (i < array.length) {
+    if (array[i] === '(') {
+      openBrackets.push(i);
+      lastBracket = i;
+      i++;
+    } else if (array[i] === ')') {
+      const partialExpression = array.slice(lastBracket + 1, i).join('');
+      const result = evaluate2(partialExpression);
+      // console.log('before:', array);
+      array.splice(lastBracket, i - lastBracket + 1, result);
+      // console.log('after', array);
+      i = lastBracket;
+      openBrackets.pop();
+      lastBracket = openBrackets[openBrackets.length - 1];
+    } else {
+      i++;
+    }
+  }
+  return array.join('');
+}
+
+function calculate2(expression) {
+  return evaluate2(dissolveBrackets2(expression));
+}
+
+const resultPart2 = expressions.reduce((accu, expression) => accu + calculate2(expression), 0);
+console.log(resultPart2);
